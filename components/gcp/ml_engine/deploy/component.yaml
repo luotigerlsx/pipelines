@@ -99,7 +99,7 @@ outputs:
     type: UI metadata
 implementation:
   container:
-    image: gcr.io/kubeflow-pipeline-fantasy/ml-pipeline-gcp@sha256:017e0e13ea8878fc8cd0730694ebbc8e574afeb929e198aa368564e2929ac61e
+    image: gcr.io/kubeflow-pipeline-fantasy/ml-pipeline-gcp@sha256:f6c77281abb1095b1e89578c2492806f2156bca9e1d717238f5b95534092b106
     args: [
       --ui_metadata_path, {outputPath: MLPipeline UI metadata},
       kfp_component.google.ml_engine, deploy,
