@@ -15,6 +15,7 @@
 import logging
 import time
 
+from google.api_core.client_options import ClientOptions
 import googleapiclient.discovery as discovery
 from googleapiclient import errors
 from ..common import wait_operation_done
@@ -22,8 +23,14 @@ from ..common import wait_operation_done
 class MLEngineClient:
     """ Client for calling MLEngine APIs.
     """
-    def __init__(self):
-        self._ml_client = discovery.build('ml', 'v1')
+    def __init__(self, endpoint_region=None):
+        if endpoint_region:
+            endpoint = 'https://{}-ml.googleapis.com'.format(endpoint_region)
+            client_options = ClientOptions(api_endpoint=endpoint)
+            self._ml_client = discovery.build('ml', 'v1',
+                                              client_options=client_options)
+        else:
+            self._ml_client = discovery.build('ml', 'v1')
 
     def create_job(self, project_id, job):
         """Create a new job.

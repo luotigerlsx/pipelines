@@ -22,18 +22,20 @@ from ._client import MLEngineClient
 from .. import common as gcp_common
 from ._common_ops import wait_existing_version, wait_for_operation_done
 
-def delete_version(version_name, wait_interval=30):
+def delete_version(version_name, wait_interval=30, endpoint_region=None,):
     """Deletes a MLEngine version and wait.
 
     Args:
         version_name (str): required, the name of the version.
         wait_interval (int): the interval to wait for a long running operation.
+        endpoint_region (str): Regional end point.
     """
-    DeleteVersionOp(version_name, wait_interval).execute_and_wait()
+    DeleteVersionOp(version_name, wait_interval,
+                    endpoint_region).execute_and_wait()
 
 class DeleteVersionOp:
-    def __init__(self, version_name, wait_interval):
-        self._ml = MLEngineClient()
+    def __init__(self, version_name, wait_interval, endpoint_region=None):
+        self._ml = MLEngineClient(endpoint_region=endpoint_region)
         self._version_name = version_name
         self._wait_interval = wait_interval
         self._delete_operation_name = None

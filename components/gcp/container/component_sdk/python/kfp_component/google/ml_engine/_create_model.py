@@ -25,6 +25,7 @@ from .. import common as gcp_common
 def create_model(project_id, model_id=None, model=None,
     model_name_output_path='/tmp/kfp/output/ml_engine/model_name.txt',
     model_object_output_path='/tmp/kfp/output/ml_engine/model.json',
+    endpoint_region=None,
 ):
     """Creates a MLEngine model.
 
@@ -33,18 +34,21 @@ def create_model(project_id, model_id=None, model=None,
         model_id (str): optional, the name of the model. If absent, a new name will 
             be generated.
         model (dict): the payload of the model.
+        endpoint_region (str): Regional end point.
     """
     return CreateModelOp(project_id, model_id, model,
         model_name_output_path=model_name_output_path,
         model_object_output_path=model_object_output_path,
+        endpoint_region=endpoint_region
     ).execute()
 
 class CreateModelOp:
     def __init__(self, project_id, model_id, model,
         model_name_output_path,
         model_object_output_path,
+        endpoint_region=None,
     ):
-        self._ml = MLEngineClient()
+        self._ml = MLEngineClient(endpoint_region=endpoint_region)
         self._project_id = project_id
         self._model_id = model_id
         self._model_name = None

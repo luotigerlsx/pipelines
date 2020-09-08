@@ -81,6 +81,10 @@ inputs:
     description: 'A time-interval to wait for in case the operation has a long run time.'
     default: '30'
     type: Integer
+  - name: endpoint_region
+    description: 'The regional endpoint used to interact with AIP prediction'
+    default: ''
+    type: String
 outputs:
   - name: model_uri
     description: 'The Cloud Storage URI of the trained model.'
@@ -95,7 +99,7 @@ outputs:
     type: UI metadata
 implementation:
   container:
-    image: gcr.io/ml-pipeline/ml-pipeline-gcp:fe6a10a4466f1e046b6b742652180c32795445f6
+    image: gcr.io/kubeflow-pipeline-fantasy/ml-pipeline-gcp@sha256:017e0e13ea8878fc8cd0730694ebbc8e574afeb929e198aa368564e2929ac61e
     args: [
       --ui_metadata_path, {outputPath: MLPipeline UI metadata},
       kfp_component.google.ml_engine, deploy,
@@ -110,6 +114,7 @@ implementation:
       --replace_existing_version, {inputValue: replace_existing_version},
       --set_default, {inputValue: set_default},
       --wait_interval, {inputValue: wait_interval},
+      --endpoint_region, {inputValue: endpoint_region},
       --model_uri_output_path, {outputPath: model_uri},
       --model_name_output_path, {outputPath: model_name},
       --version_name_output_path, {outputPath: version_name},

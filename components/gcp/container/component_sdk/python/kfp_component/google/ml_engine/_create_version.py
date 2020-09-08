@@ -31,6 +31,7 @@ def create_version(model_name, deployemnt_uri=None, version_id=None,
     replace_existing=False, wait_interval=30,
     version_name_output_path='/tmp/kfp/output/ml_engine/version_name.txt',
     version_object_output_path='/tmp/kfp/output/ml_engine/version.json',
+    endpoint_region=None,
 ):
     """Creates a MLEngine version and wait for the operation to be done.
 
@@ -51,6 +52,7 @@ def create_version(model_name, deployemnt_uri=None, version_id=None,
         replace_existing (boolean): boolean flag indicates whether to replace 
             existing version in case of conflict.
         wait_interval (int): the interval to wait for a long running operation.
+        endpoint_region (str): Regional end point.
     """
     if not version:
         version = {}
@@ -67,6 +69,7 @@ def create_version(model_name, deployemnt_uri=None, version_id=None,
         replace_existing, wait_interval,
         version_name_output_path=version_name_output_path,
         version_object_output_path=version_object_output_path,
+        endpoint_region=endpoint_region
     ).execute_and_wait()
 
 class CreateVersionOp:
@@ -74,8 +77,9 @@ class CreateVersionOp:
         replace_existing, wait_interval,
         version_name_output_path,
         version_object_output_path,
+        endpoint_region=None,
     ):
-        self._ml = MLEngineClient()
+        self._ml = MLEngineClient(endpoint_region=endpoint_region)
         self._model_name = model_name
         self._project_id, self._model_id = self._parse_model_name(model_name)
         # The name of the version resource, which is in the format 

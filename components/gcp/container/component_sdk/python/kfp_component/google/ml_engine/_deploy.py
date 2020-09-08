@@ -30,7 +30,8 @@ def deploy(model_uri, project_id,
     model_uri_output_path, model_name_output_path, version_name_output_path,
     model_id=None, version_id=None, 
     runtime_version=None, python_version=None, model=None, version=None, 
-    replace_existing_version=False, set_default=False, wait_interval=30):
+    replace_existing_version=False, set_default=False, wait_interval=30,
+    endpoint_region=None,):
     """Deploy a model to MLEngine from GCS URI
 
     Args:
@@ -58,21 +59,25 @@ def deploy(model_uri, project_id,
         set_default (boolean): boolean flag indicates whether to set the new
             version as default version in the model.
         wait_interval (int): the interval to wait for a long running operation.
+        endpoint_region (str): Regional end point.
     """
     storage_client = storage.Client()
     model_uri = _search_dir_with_model(storage_client, model_uri)
     gcp_common.dump_file(model_uri_output_path, model_uri)
     model = create_model(project_id, model_id, model,
         model_name_output_path=model_name_output_path,
+        endpoint_region=endpoint_region,
     )
     model_name = model.get('name')
     version = create_version(model_name, model_uri, version_id,
         runtime_version, python_version, version, replace_existing_version,
         wait_interval, version_name_output_path=version_name_output_path,
+        endpoint_region=endpoint_region,
     )
     if set_default:
         version_name = version.get('name')
-        version = set_default_version(version_name)
+        version = set_default_version(version_name,
+                                      endpoint_region=endpoint_region)
     return version
 
 def _search_dir_with_model(storage_client, model_root_uri):

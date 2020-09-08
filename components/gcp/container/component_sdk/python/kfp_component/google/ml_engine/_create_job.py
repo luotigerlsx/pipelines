@@ -35,12 +35,13 @@ def create_job(
     job_object_output_path='/tmp/kfp/output/ml_engine/job.json',
     job_id_output_path='/tmp/kfp/output/ml_engine/job_id.txt',
     job_dir_output_path='/tmp/kfp/output/ml_engine/job_dir.txt',
+    endpoint_region=None,
 ):
     """Creates a MLEngine job.
 
     Args:
         project_id: the ID of the parent project of the job.
-        job: the payload of the job. Must have ``jobId`` 
+        job: the payload of the job. Must have ``jobId``
             and ``trainingInput`` or ``predictionInput`.
         job_id_prefix: the prefix of the generated job id.
         job_id: the created job_id, takes precedence over generated job
@@ -50,6 +51,7 @@ def create_job(
         job_object_output_path: Path for the json payload of the create job.
         job_id_output_path: Path for the ID of the created job.
         job_dir_output_path: Path for the `jobDir` of the training job.
+        endpoint_region (str): Regional end point.
     """
     return CreateJobOp(
         project_id=project_id,
@@ -60,16 +62,18 @@ def create_job(
         job_object_output_path=job_object_output_path,
         job_id_output_path=job_id_output_path,
         job_dir_output_path=job_dir_output_path,
+        endpoint_region=endpoint_region,
     ).execute_and_wait()
 
 class CreateJobOp:
-    def __init__(self,project_id, job, job_id_prefix=None, job_id=None,
+    def __init__(self, project_id, job, job_id_prefix=None, job_id=None,
         wait_interval=30,
         job_object_output_path=None,
         job_id_output_path=None,
         job_dir_output_path=None,
+        endpoint_region=None,
     ):
-        self._ml = MLEngineClient()
+        self._ml = MLEngineClient(endpoint_region=endpoint_region)
         self._project_id = project_id
         self._job_id_prefix = job_id_prefix
         self._job_id = job_id
@@ -78,7 +82,7 @@ class CreateJobOp:
         self._job_object_output_path = job_object_output_path
         self._job_id_output_path = job_id_output_path
         self._job_dir_output_path = job_dir_output_path
-    
+
     def execute_and_wait(self):
         with KfpExecutionContext(on_cancel=lambda: cancel_job(self._ml, self._project_id, self._job_id)) as ctx:
             self._set_job_id(ctx.context_id())
