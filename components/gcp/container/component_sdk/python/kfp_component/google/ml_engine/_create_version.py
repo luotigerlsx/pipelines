@@ -27,11 +27,12 @@ from ._common_ops import wait_existing_version, wait_for_operation_done
 
 @decorators.SetParseFns(python_version=str, runtime_version=str)
 def create_version(model_name, deployemnt_uri=None, version_id=None, 
-    runtime_version=None, python_version=None, version=None, 
+    runtime_version=None, python_version=None, version=None,
     replace_existing=False, wait_interval=30,
     version_name_output_path='/tmp/kfp/output/ml_engine/version_name.txt',
     version_object_output_path='/tmp/kfp/output/ml_engine/version.json',
     endpoint_region=None,
+    machine_type='n1-standard-2',
 ):
     """Creates a MLEngine version and wait for the operation to be done.
 
@@ -53,6 +54,7 @@ def create_version(model_name, deployemnt_uri=None, version_id=None,
             existing version in case of conflict.
         wait_interval (int): the interval to wait for a long running operation.
         endpoint_region (str): Regional end point.
+        machine_type (str): A Compute Engine (N1) machine type.
     """
     if not version:
         version = {}
@@ -64,6 +66,8 @@ def create_version(model_name, deployemnt_uri=None, version_id=None,
         version['runtimeVersion'] = runtime_version
     if python_version:
         version['pythonVersion'] = python_version
+    if endpoint_region:
+        version['machineType'] = machine_type
 
     return CreateVersionOp(model_name, version, 
         replace_existing, wait_interval,

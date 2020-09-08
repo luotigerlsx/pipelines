@@ -31,7 +31,7 @@ def deploy(model_uri, project_id,
     model_id=None, version_id=None, 
     runtime_version=None, python_version=None, model=None, version=None, 
     replace_existing_version=False, set_default=False, wait_interval=30,
-    endpoint_region=None,):
+    endpoint_region=None, machine_type='n1-standard-2',):
     """Deploy a model to MLEngine from GCS URI
 
     Args:
@@ -60,6 +60,7 @@ def deploy(model_uri, project_id,
             version as default version in the model.
         wait_interval (int): the interval to wait for a long running operation.
         endpoint_region (str): Regional end point.
+        machine_type (str): A Compute Engine (N1) machine type.
     """
     storage_client = storage.Client()
     model_uri = _search_dir_with_model(storage_client, model_uri)
@@ -73,6 +74,7 @@ def deploy(model_uri, project_id,
         runtime_version, python_version, version, replace_existing_version,
         wait_interval, version_name_output_path=version_name_output_path,
         endpoint_region=endpoint_region,
+        machine_type=machine_type,
     )
     if set_default:
         version_name = version.get('name')

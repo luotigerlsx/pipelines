@@ -82,8 +82,12 @@ inputs:
     default: '30'
     type: Integer
   - name: endpoint_region
-    description: 'The regional endpoint used to interact with AIP prediction'
+    description: 'The regional endpoint used to interact with AIP prediction.'
     default: ''
+    type: String
+  - name: machine_type
+    description: 'A Compute Engine (N1) machine type.'
+    default: 'n1-standard-2'
     type: String
 outputs:
   - name: model_uri
@@ -99,7 +103,7 @@ outputs:
     type: UI metadata
 implementation:
   container:
-    image: gcr.io/kubeflow-pipeline-fantasy/ml-pipeline-gcp@sha256:f6c77281abb1095b1e89578c2492806f2156bca9e1d717238f5b95534092b106
+    image: gcr.io/kubeflow-pipeline-fantasy/ml-pipeline-gcp@sha256:66f8b7e0daa5dc9343bbd08315bb4a286bc78df2d1feaea9ff26438ec064e1b8
     args: [
       --ui_metadata_path, {outputPath: MLPipeline UI metadata},
       kfp_component.google.ml_engine, deploy,
@@ -115,6 +119,7 @@ implementation:
       --set_default, {inputValue: set_default},
       --wait_interval, {inputValue: wait_interval},
       --endpoint_region, {inputValue: endpoint_region},
+      --machine_type, {inputValue: machine_type},
       --model_uri_output_path, {outputPath: model_uri},
       --model_name_output_path, {outputPath: model_name},
       --version_name_output_path, {outputPath: version_name},
